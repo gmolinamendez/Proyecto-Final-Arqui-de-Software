@@ -1,13 +1,10 @@
-import requests
-import os
-from flask import Flask, jsonify, redirect, render_template, request, url_for
-from sqlalchemy import create_engine, text
-from database import engine
+from flask import jsonify, request
+
 from main import app
+from Metodos.Eventos import Eventos
 
-from Metodos.Usuarios import *
-from Metodos.Eventos import *
 
+eventos_service = Eventos()
 
 
 @app.route("/persons", methods=["POST"])
@@ -21,6 +18,7 @@ def create_person():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+
 @app.route("/persons", methods=["GET"])
 def get_persons():
     try:
@@ -28,6 +26,7 @@ def get_persons():
         return jsonify([{"id": p[0], "name": p[1], "age": p[2]} for p in persons]), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
 
 @app.route("/persons/<int:person_id>", methods=["DELETE"])
 def delete_person(person_id):

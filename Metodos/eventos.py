@@ -1,18 +1,11 @@
-import os
-from flask import Flask, jsonify, redirect, render_template, request, url_for
-from sqlalchemy import create_engine, text
+from sqlalchemy import text
 from database import engine
-from main import app
-
-from Metodos.Usuarios import Usuarios
-from Metodos.Eventos import Eventos
 
 
 class Eventos:
     def __init__(self):
         pass
-        
-#######################################################  Metodos POST  ############################################################################   
+
     def create_person(self, name, age):
         with engine.begin() as connection:
             result = connection.execute(
@@ -23,7 +16,7 @@ class Eventos:
             )
             person_id = result.fetchone()[0]
         return person_id
-    
+
     def create_event(self, name, date, location):
         with engine.begin() as connection:
             result = connection.execute(
@@ -34,7 +27,7 @@ class Eventos:
             )
             event_id = result.fetchone()[0]
         return event_id
-    
+
     def add_attendee(self, event_id, person_id):
         with engine.begin() as connection:
             connection.execute(
@@ -43,7 +36,7 @@ class Eventos:
                 ),
                 {"event_id": event_id, "person_id": person_id},
             )
-    
+
     def update_event(self, event_id, name=None, date=None, location=None):
         with engine.begin() as connection:
             if name:
@@ -62,8 +55,6 @@ class Eventos:
                     {"location": location, "event_id": event_id},
                 )
 
-#####################################################  Metodos GET  ############################################################################ 
-    
     def get_attendees(self, event_id):
         with engine.connect() as connection:
             result = connection.execute(
@@ -74,13 +65,13 @@ class Eventos:
             )
             attendees = result.fetchall()
         return attendees
-    
+
     def get_events(self):
         with engine.connect() as connection:
             result = connection.execute(text("SELECT * FROM Events"))
             events = result.fetchall()
         return events
-    
+
     def get_events_by_id(self, event_id):
         with engine.connect() as connection:
             result = connection.execute(
@@ -89,14 +80,13 @@ class Eventos:
             )
             event = result.fetchone()
         return event
-    
+
     def get_persons(self):
         with engine.connect() as connection:
             result = connection.execute(text("SELECT * FROM Persons"))
             persons = result.fetchall()
         return persons
-    
-###################################################  Metodos DELETE  ############################################################################  
+
     def delete_event(self, event_id):
         with engine.begin() as connection:
             connection.execute(
