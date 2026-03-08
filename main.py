@@ -9,11 +9,5 @@ from APIs.Events import *  # noqa: E402,F401,F403
 from APIs.Persons import *  # noqa: E402,F401,F403
 from APIs.Attendees import *  # noqa: E402,F401,F403
 
-
-@app.route("/")
-def hello():
-    return render_template("index.html", message="Hello from Flask with PostgreSQL!")
-
-
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5050, debug=True)
