@@ -1,6 +1,6 @@
 from flask import jsonify, request
 
-from main import app
+from app_instance import app
 from Metodos.Usuarios import Usuarios
 
 
