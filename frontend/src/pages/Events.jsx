@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { getEvents, createEvent, deleteEvent } from '../services/eventService';
 import Modal from '../components/Modal';
-import { Plus, Trash2, Edit, ChevronRight } from 'lucide-react';
+import { Plus, Trash2, ChevronRight, CalendarDays } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const Events = () => {

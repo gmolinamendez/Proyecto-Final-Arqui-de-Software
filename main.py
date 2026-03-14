@@ -31,24 +31,25 @@ def _client_prefers_html():
 
 
 def _register_api_aliases():
-    existing_rules = {rule.rule for rule in app.url_map.iter_rules()}
+    existing_endpoints = set(app.view_functions)
 
     for rule in list(app.url_map.iter_rules()):
         if rule.rule.startswith("/static") or rule.rule.startswith("/api"):
             continue
 
         api_rule = f"/api{rule.rule}"
-        if api_rule in existing_rules:
+        alias_endpoint = f"api_alias_{rule.endpoint}"
+        if alias_endpoint in existing_endpoints:
             continue
 
         methods = sorted(rule.methods - {"HEAD", "OPTIONS"})
         app.add_url_rule(
             api_rule,
-            endpoint=f"api_alias_{rule.endpoint}",
+            endpoint=alias_endpoint,
             view_func=app.view_functions[rule.endpoint],
             methods=methods,
         )
-        existing_rules.add(api_rule)
+        existing_endpoints.add(alias_endpoint)
 
 
 _register_api_aliases()
