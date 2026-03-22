@@ -1,7 +1,7 @@
 from flask import jsonify, request
 
 from app_instance import app
-from Metodos.Eventos import Eventos
+from Metodos.eventos import Eventos
 
 
 eventos_service = Eventos()
