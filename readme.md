@@ -9,6 +9,10 @@
 * Ariel Alfaro
 * Rolando Zelaya
 
+## RUN
+1. Activar Virtual Environment
+2. Usar docker compose -d --build
+
 ## Descripción
 
 En este proyecto, los estudiantes diseñarán y desarrollarán un sistema de software que permita a las empresas gestionar eventos corporativos. Este sistema incluirá funcionalidades como:

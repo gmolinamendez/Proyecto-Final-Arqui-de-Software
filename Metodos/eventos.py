@@ -30,6 +30,15 @@ class Eventos:
 
     def add_attendee(self, event_id, person_id):
         with engine.begin() as connection:
+            existing = connection.execute(
+                text(
+                    "SELECT 1 FROM EventAttendees WHERE event_id = :event_id AND person_id = :person_id"
+                ),
+                {"event_id": event_id, "person_id": person_id},
+            ).fetchone()
+            if existing:
+                raise ValueError("Attendee already registered for this event")
+
             connection.execute(
                 text(
                     "INSERT INTO EventAttendees (event_id, person_id) VALUES (:event_id, :person_id)"
@@ -38,22 +47,31 @@ class Eventos:
             )
 
     def update_event(self, event_id, name=None, date=None, location=None):
+        if name is None and date is None and location is None:
+            raise ValueError("At least one field is required")
+
+        updated_rows = 0
         with engine.begin() as connection:
-            if name:
-                connection.execute(
+            if name is not None:
+                result = connection.execute(
                     text("UPDATE Events SET name = :name WHERE id = :event_id"),
                     {"name": name, "event_id": event_id},
                 )
-            if date:
-                connection.execute(
+                updated_rows = max(updated_rows, result.rowcount or 0)
+            if date is not None:
+                result = connection.execute(
                     text("UPDATE Events SET date = :date WHERE id = :event_id"),
                     {"date": date, "event_id": event_id},
                 )
-            if location:
-                connection.execute(
+                updated_rows = max(updated_rows, result.rowcount or 0)
+            if location is not None:
+                result = connection.execute(
                     text("UPDATE Events SET location = :location WHERE id = :event_id"),
                     {"location": location, "event_id": event_id},
                 )
+                updated_rows = max(updated_rows, result.rowcount or 0)
+
+        return updated_rows > 0
 
     def get_attendees(self, event_id):
         with engine.connect() as connection:
@@ -93,23 +111,30 @@ class Eventos:
                 text("DELETE FROM EventAttendees WHERE event_id = :event_id"),
                 {"event_id": event_id},
             )
-            connection.execute(
+            result = connection.execute(
                 text("DELETE FROM Events WHERE id = :event_id"),
                 {"event_id": event_id},
             )
+        return (result.rowcount or 0) > 0
 
     def remove_attendee(self, event_id, person_id):
         with engine.begin() as connection:
-            connection.execute(
+            result = connection.execute(
                 text(
                     "DELETE FROM EventAttendees WHERE event_id = :event_id AND person_id = :person_id"
                 ),
                 {"event_id": event_id, "person_id": person_id},
             )
+        return (result.rowcount or 0) > 0
 
     def delete_person(self, person_id):
         with engine.begin() as connection:
             connection.execute(
+                text("DELETE FROM EventAttendees WHERE person_id = :person_id"),
+                {"person_id": person_id},
+            )
+            result = connection.execute(
                 text("DELETE FROM Persons WHERE id = :person_id"),
                 {"person_id": person_id},
             )
+        return (result.rowcount or 0) > 0

@@ -1,3 +1,5 @@
+import os
+
 from flask import request, send_from_directory
 from app_instance import FRONTEND_DIST_DIR, app
 
@@ -91,4 +93,7 @@ def serve_react_app(path):
     return _serve_frontend_entry()
 
 if __name__ == "__main__":
-    app.run(host="localhost", port=5050, debug=True)
+    host = os.getenv("HOST", "0.0.0.0")
+    port = int(os.getenv("PORT", "5050"))
+    debug = os.getenv("FLASK_DEBUG", "0") == "1"
+    app.run(host=host, port=port, debug=debug)

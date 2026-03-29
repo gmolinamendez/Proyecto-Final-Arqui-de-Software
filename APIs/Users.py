@@ -18,9 +18,10 @@ def create_user():
         )
         return jsonify({"message": "User created", "id": user_id}), 201
     except ValueError as e:
-        return jsonify({"error": str(e)}), 409
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        status = 409 if "already registered" in str(e).lower() else 400
+        return jsonify({"error": str(e)}), status
+    except Exception:
+        return jsonify({"error": "Internal server error"}), 500
 
 
 @app.route("/users", methods=["GET"])
@@ -33,8 +34,8 @@ def get_users():
             ),
             200,
         )
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+    except Exception:
+        return jsonify({"error": "Internal server error"}), 500
 
 
 @app.route("/users/<int:user_id>", methods=["GET"])
@@ -54,8 +55,8 @@ def get_user_by_id(user_id):
             ),
             200,
         )
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+    except Exception:
+        return jsonify({"error": "Internal server error"}), 500
 
 
 @app.route("/users/by-email", methods=["GET"])
@@ -78,30 +79,37 @@ def get_user_by_email():
             ),
             200,
         )
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+    except Exception:
+        return jsonify({"error": "Internal server error"}), 500
 
 
 @app.route("/users/<int:user_id>", methods=["PATCH"])
 def update_user(user_id):
     data = request.get_json() or {}
     try:
-        usuarios_service.update_user(
+        updated = usuarios_service.update_user(
             user_id,
             name=data.get("name"),
             username=data.get("username"),
             email=data.get("email"),
             password=data.get("password"),
         )
+        if not updated:
+            return jsonify({"error": "User not found"}), 404
         return jsonify({"message": "User updated"}), 200
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+    except ValueError as e:
+        status = 409 if "already registered" in str(e).lower() else 400
+        return jsonify({"error": str(e)}), status
+    except Exception:
+        return jsonify({"error": "Internal server error"}), 500
 
 
 @app.route("/users/<int:user_id>", methods=["DELETE"])
 def delete_user(user_id):
     try:
-        usuarios_service.delete_user(user_id)
+        deleted = usuarios_service.delete_user(user_id)
+        if not deleted:
+            return jsonify({"error": "User not found"}), 404
         return jsonify({"message": "User deleted"}), 200
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+    except Exception:
+        return jsonify({"error": "Internal server error"}), 500

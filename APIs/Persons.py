@@ -15,8 +15,8 @@ def create_person():
     try:
         person_id = eventos_service.create_person(data["name"], data["age"])
         return jsonify({"message": "Person created", "id": person_id}), 201
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+    except Exception:
+        return jsonify({"error": "Internal server error"}), 500
 
 
 @app.route("/persons", methods=["GET"])
@@ -24,14 +24,16 @@ def get_persons():
     try:
         persons = eventos_service.get_persons()
         return jsonify([{"id": p[0], "name": p[1], "age": p[2]} for p in persons]), 200
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+    except Exception:
+        return jsonify({"error": "Internal server error"}), 500
 
 
 @app.route("/persons/<int:person_id>", methods=["DELETE"])
 def delete_person(person_id):
     try:
-        eventos_service.delete_person(person_id)
+        deleted = eventos_service.delete_person(person_id)
+        if not deleted:
+            return jsonify({"error": "Person not found"}), 404
         return jsonify({"message": "Person deleted"}), 200
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+    except Exception:
+        return jsonify({"error": "Internal server error"}), 500

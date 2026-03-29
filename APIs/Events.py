@@ -17,8 +17,8 @@ def create_event():
             data["name"], data["date"], data["location"]
         )
         return jsonify({"message": "Event created", "id": event_id}), 201
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+    except Exception:
+        return jsonify({"error": "Internal server error"}), 500
 
 
 @app.route("/events", methods=["GET"])
@@ -39,8 +39,8 @@ def get_events():
             ),
             200,
         )
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+    except Exception:
+        return jsonify({"error": "Internal server error"}), 500
 
 
 @app.route("/events/<int:event_id>", methods=["GET"])
@@ -60,29 +60,35 @@ def get_event_by_id(event_id):
             ),
             200,
         )
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+    except Exception:
+        return jsonify({"error": "Internal server error"}), 500
 
 
 @app.route("/events/<int:event_id>", methods=["PATCH"])
 def update_event(event_id):
     data = request.get_json() or {}
     try:
-        eventos_service.update_event(
+        updated = eventos_service.update_event(
             event_id,
             name=data.get("name"),
             date=data.get("date"),
             location=data.get("location"),
         )
+        if not updated:
+            return jsonify({"error": "Event not found"}), 404
         return jsonify({"message": "Event updated"}), 200
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 400
+    except Exception:
+        return jsonify({"error": "Internal server error"}), 500
 
 
 @app.route("/events/<int:event_id>", methods=["DELETE"])
 def delete_event(event_id):
     try:
-        eventos_service.delete_event(event_id)
+        deleted = eventos_service.delete_event(event_id)
+        if not deleted:
+            return jsonify({"error": "Event not found"}), 404
         return jsonify({"message": "Event deleted"}), 200
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+    except Exception:
+        return jsonify({"error": "Internal server error"}), 500
