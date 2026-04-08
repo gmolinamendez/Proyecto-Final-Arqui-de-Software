@@ -25,7 +25,7 @@ const UsersPage = () => {
             loadUsers();
         } catch (err) {
             console.error(err);
-            alert('Error creating user (might already exist)');
+            alert(err.response?.data?.error || 'Error creating user (might already exist)');
         }
     };
 

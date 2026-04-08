@@ -9,9 +9,34 @@
 * Ariel Alfaro
 * Rolando Zelaya
 
-## RUN
-1. Activar Virtual Environment
-2. Usar docker compose -d --build
+## Guía de Evaluación Rápida
+
+**Requisitos**: Disponer de Docker Desktop. Totalmente compatible con arquitecturas Mac M1 (ARM64) y distribuciones basadas en Linux u x86_64.
+
+1. **Instalación y Despliegue:** 
+   Levanta la base de datos PostgreSQL, el Backend en Flask y el Frontend en React empaquetado bajo modo producción usando un único comando:
+   ```bash
+   docker-compose up --build -d
+   ```
+
+2. **Acceso al Sistema:**
+   La aplicación completa queda instanciada en **[http://localhost:5050](http://localhost:5050)**.
+
+3. **Pruebas (Mandatorio):** 
+   Ejecute las diferentes suites de pruebas (Humo, Unitarias e Integración) mediante la consola dentro del contenedor Docker para verificar la calidad del sistema automatizado:
+   ```bash
+   # Pruebas de Humo (Conexiones críticas)
+   docker exec flask_app python -m unittest tests/test_smoke.py -v
+   
+   # Pruebas Unitarias (Lógica de negocio aislada)
+   docker exec flask_app python -m unittest tests/test_unit.py -v
+   
+   # Pruebas de Integración (Flujos End-to-End con Base de Datos)
+   docker exec flask_app python -m unittest tests/test_integration.py -v
+   
+   # O correr TODAS las pruebas de una vez:
+   docker exec flask_app python -m unittest discover -s tests -v
+   ```
 
 ## Descripción
 
