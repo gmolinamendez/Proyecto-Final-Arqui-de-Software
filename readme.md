@@ -9,9 +9,24 @@
 * Ariel Alfaro
 * Rolando Zelaya
 
-## RUN
-1. Activar Virtual Environment
-2. Usar docker compose -d --build
+## Guía de Evaluación Rápida
+
+**Requisitos**: Disponer de Docker Desktop. Totalmente compatible con arquitecturas Mac M1 (ARM64) y distribuciones basadas en Linux u x86_64.
+
+1. **Instalación y Despliegue:** 
+   Levanta la base de datos PostgreSQL, el Backend en Flask y el Frontend en React empaquetado bajo modo producción usando un único comando:
+   ```bash
+   docker-compose up --build -d
+   ```
+
+2. **Acceso al Sistema:**
+   La aplicación completa queda instanciada en **[http://localhost:5050](http://localhost:5050)**.
+
+3. **Pruebas (Mandatorio):** 
+   Para auditar las Pruebas de Humo sin intervenir el flujo manual, ejecute la suite de Python Unit Test que verificará independientemente la conexión raw con la base de datos así como el flujo de los endpoints API `/users` y `/events`:
+   ```bash
+   docker exec flask_app python -m unittest tests/test_smoke.py -v
+   ```
 
 ## Descripción
 
