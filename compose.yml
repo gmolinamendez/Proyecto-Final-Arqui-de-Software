@@ -2,7 +2,6 @@ services:
   postgresql:
     container_name: postgres_db
     image: postgres:16-alpine
-    platform: linux/arm64
     restart: unless-stopped
     environment:
       POSTGRES_USER: postgres
@@ -20,7 +19,6 @@ services:
   app:
     container_name: flask_app
     image: proyectofinalarquidesoftware-app:${APP_VERSION:-1.1}
-    platform: linux/arm64
     build:
       context: .
       dockerfile: Dockerfile

@@ -23,9 +23,19 @@
    La aplicación completa queda instanciada en **[http://localhost:5050](http://localhost:5050)**.
 
 3. **Pruebas (Mandatorio):** 
-   Para auditar las Pruebas de Humo sin intervenir el flujo manual, ejecute la suite de Python Unit Test que verificará independientemente la conexión raw con la base de datos así como el flujo de los endpoints API `/users` y `/events`:
+   Ejecute las diferentes suites de pruebas (Humo, Unitarias e Integración) mediante la consola dentro del contenedor Docker para verificar la calidad del sistema automatizado:
    ```bash
+   # Pruebas de Humo (Conexiones críticas)
    docker exec flask_app python -m unittest tests/test_smoke.py -v
+   
+   # Pruebas Unitarias (Lógica de negocio aislada)
+   docker exec flask_app python -m unittest tests/test_unit.py -v
+   
+   # Pruebas de Integración (Flujos End-to-End con Base de Datos)
+   docker exec flask_app python -m unittest tests/test_integration.py -v
+   
+   # O correr TODAS las pruebas de una vez:
+   docker exec flask_app python -m unittest discover -s tests -v
    ```
 
 ## Descripción
